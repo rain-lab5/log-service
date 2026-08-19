@@ -10,8 +10,9 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
 
-    "skipLibCheck": true,
+    "types": ["node"],
 
+    "skipLibCheck": true,
     "sourceMap": true
   },
   "include": ["src/**/*.ts"],
