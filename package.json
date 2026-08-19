@@ -1,0 +1,28 @@
+{
+  "name": "log-service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev" : "tsx src/server.ts",
+    "build" : "tsc",
+    "start" : "node dost/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rain-lab5/log-service.git"
+  },
+  "keywords": [],
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/rain-lab5/log-service/issues"
+  },
+  "homepage": "https://github.com/rain-lab5/log-service#readme",
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "tsx": "^4.23.12",
+    "typescript": "^7.0.2"
+  }
+}
