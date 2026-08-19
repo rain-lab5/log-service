@@ -41,3 +41,7 @@ export const logs = pgTable(
     ),
   ],
 );
+
+
+export type NewLog = typeof logs.$inferInsert;
+export type Log = typeof logs.$inferSelect;
