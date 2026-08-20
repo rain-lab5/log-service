@@ -22,6 +22,7 @@
   },
   "homepage": "https://github.com/rain-lab5/log-service#readme",
   "devDependencies": {
+    "@types/express": "^5.0.6",
     "@types/node": "^26.2.0",
     "drizzle-kit": "^0.31.10",
     "tsx": "^4.23.12",
@@ -30,6 +31,7 @@
   "dependencies": {
     "dotenv": "^17.4.2",
     "drizzle-orm": "^0.45.2",
+    "express": "^5.2.1",
     "postgres": "^3.4.9"
   }
 }
