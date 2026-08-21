@@ -42,6 +42,6 @@ export const logs = pgTable(
   ],
 );
 
-
+export type Level = "debug" | "info" | "warn" | "error";
 export type NewLog = typeof logs.$inferInsert;
 export type Log = typeof logs.$inferSelect;

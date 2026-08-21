@@ -1,11 +1,18 @@
 import express, { type Request, type Response } from "express";
 import { healthHandler } from "./http/handlers/healthHandler.js";
+import { handleAddLogs } from "./http/handlers/handleAddLogs.js";
 import { initializeApplication } from "./startup.js";
+
 
 const app = express();
 const PORT = 8080;
-app.get("/health",healthHandler);
+// CONTRACT FIX: parse JSON request bodies before the endpoint handler runs.
+app.use(express.json());
 
+//------ ROUTES ------//
+app.get("/health",healthHandler);
+app.post("/logs",handleAddLogs);
+//------ ROUTES ------//
 
 async function startServer() : Promise<void>
 {

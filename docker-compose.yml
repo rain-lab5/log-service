@@ -1,12 +1,17 @@
 services:
 
-
-  app :
-    build : .
-    ports :
-    - "8080:8080"
-    environment :
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
       DATABASE_URL: postgresql://logservice:logservice@postgres:5432/logservice
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+
   postgres:
     image: postgres:18
     environment:
@@ -17,6 +22,11 @@ services:
       - "15432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1G
 
 volumes:
   postgres_data:
