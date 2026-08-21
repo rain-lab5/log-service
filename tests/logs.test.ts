@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import type { Request, Response } from "express";
+
 import { handleAddLogs } from "../src/http/handlers/handleAddLogs.js";
 
 function createResponseDouble() {
@@ -12,17 +13,17 @@ function createResponseDouble() {
 	return response;
 }
 
-function callHandler(body: unknown) {
+async function callHandler(body: unknown) {
 	const response = createResponseDouble();
 
-	handleAddLogs({ body } as Request, response as unknown as Response);
+	await handleAddLogs({ body } as Request, response as unknown as Response);
 
 	return response;
 }
 
 describe("POST /logs", () => {
-	it("accepts valid entries and reports invalid entries by index", () => {
-		const response = callHandler({
+	it("accepts valid entries and reports invalid entries by index", async () => {
+		const response = await callHandler({
 			logs: [
 				{
 					timestamp: "2026-08-20T14:32:01.123Z",
@@ -92,8 +93,8 @@ describe("POST /logs", () => {
 		});
 	});
 
-	it("returns 400 when every entry is rejected", () => {
-		const response = callHandler({
+	it("returns 400 when every entry is rejected", async () => {
+		const response = await callHandler({
 			logs: [
 				{
 					timestamp: "2026-08-20T14:32:01.123Z",
@@ -111,14 +112,14 @@ describe("POST /logs", () => {
 		});
 	});
 
-	it("returns 400 when the top-level body is not a logs batch", () => {
-		const response = callHandler({ logs: "not an array" });
+	it("returns 400 when the top-level body is not a logs batch", async () => {
+		const response = await callHandler({ logs: "not an array" });
 
 		expect(response.status).toHaveBeenCalledWith(400);
 	});
 
-	it("rejects whitespace-only service and message values", () => {
-		const response = callHandler({
+	it("rejects whitespace-only service and message values", async () => {
+		const response = await callHandler({
 			logs: [
 				{
 					timestamp: "2026-08-20T14:32:01.123Z",

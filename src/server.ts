@@ -2,6 +2,7 @@ import express, { type Request, type Response } from "express";
 import { healthHandler } from "./http/handlers/healthHandler.js";
 import { handleAddLogs } from "./http/handlers/handleAddLogs.js";
 import { initializeApplication } from "./startup.js";
+import { errorHandler } from "./http/middleware/errorHandler.js";
 
 
 const app = express();
@@ -13,6 +14,10 @@ app.use(express.json());
 app.get("/health",healthHandler);
 app.post("/logs",handleAddLogs);
 //------ ROUTES ------//
+
+// ------ ERROR HANDLER ------ //
+app.use(errorHandler);
+// ------ ERROR HANDLER ------ //
 
 async function startServer() : Promise<void>
 {
