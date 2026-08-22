@@ -1,6 +1,6 @@
 // src/http/handlers/handleGetLogs.ts
 import type { Request, Response } from "express";
-import { findLogs } from "../../db/queries/logsQueries";
+import { findLogs } from "../../db/queries/getLogsQuery";
 import { parseLogQuery } from "../../validation/validateQuery";
 
 export async function handleGetLogs(req: Request, res: Response) {

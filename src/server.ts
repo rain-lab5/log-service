@@ -4,7 +4,7 @@ import { handleAddLogs } from "./http/handlers/handleAddLogs.js";
 import { initializeApplication } from "./startup.js";
 import { errorHandler } from "./http/middleware/errorHandler.js";
 import { handleGetLogs } from "./http/handlers/handleGetLogs.js";
-
+import { handleAggregateLogs } from "./http/handlers/handleAggLogs.js";
 const app = express();
 const PORT = 8080;
 // CONTRACT FIX: parse JSON request bodies before the endpoint handler runs.
@@ -16,6 +16,7 @@ app.use(express.json({limit : "1mb"}));
 app.get("/health",healthHandler);
 app.post("/logs",handleAddLogs);
 app.get("/logs",handleGetLogs);
+app.get("/logs/aggregate",handleAggregateLogs)
 //------ ROUTES ------//
 
 // ------ ERROR HANDLER ------ //
