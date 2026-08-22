@@ -9,10 +9,14 @@ import { sql } from "drizzle-orm";
 import { config } from "../config.js";
 
 const client = postgres(config.databaseUrl, {
-  max: 30,                    // tune against DB CPU/core count, not guessed
+  // With inserts batched, you don't want many client connections
+  // competing for one physical core — a handful is enough to keep the
+  // batch-insert writer and concurrent GET /logs / /logs/aggregate
+  // queries from blocking each other. Re-check this against your own
+  // load test; don't assume this number without measuring.
+  max: 8,
   idle_timeout: 20,
   connect_timeout: 5,
-  max_lifetime: 60 * 30,
 });
 export const db = drizzle(client, {schema});
 

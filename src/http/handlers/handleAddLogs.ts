@@ -1,7 +1,6 @@
 import type { Request, Response } from "express";
 import { validateLogs } from "../../validation/validateLogs";
-import { insertLogs } from "../../db/queries/logsQueries";
-
+import { enqueueInsertMany } from "../../db/queries/batchInsert";
 function isLogsRequest(value: unknown): value is { logs: unknown[] } {
   return (
     typeof value === "object" &&
@@ -28,7 +27,7 @@ export async function handleAddLogs(req : Request, res : Response)
     //--- Any error thrown from the insert function will get caught in server.ts by the errorHandler ---//
     // DATABASE FIX: do not issue an empty insert when every entry is rejected.
      if (result.valid.length > 0) {
-        await insertLogs(result.valid);
+        await enqueueInsertMany(result.valid);
      }
 
 

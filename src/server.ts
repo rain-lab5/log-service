@@ -16,7 +16,7 @@ app.use(express.json({limit : "1mb"}));
 app.get("/health",healthHandler);
 app.post("/logs",handleAddLogs);
 app.get("/logs",handleGetLogs);
-app.get("/logs/aggregate",handleAggregateLogs)
+app.get("/logs/aggregate",handleAggregateLogs);
 //------ ROUTES ------//
 
 // ------ ERROR HANDLER ------ //

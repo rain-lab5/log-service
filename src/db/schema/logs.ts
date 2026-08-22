@@ -31,15 +31,28 @@ export const logs = pgTable(
       .default({}),
   },
   (table) => [
-    index("logs_attributes_gin_idx")
-      .using("gin", table.attributes),
+    // Covers queries filtered by service (+ time range, cursor pagination).
+    index("logs_service_timestamp_id_idx").on(
+      table.service,
+      table.timestamp.desc(),
+      table.id.desc(),
+    ),
 
-    // Temporarily disabled for ingestion benchmarking.
-     index("logs_service_timestamp_id_idx").on(
-     table.service,
-     table.timestamp.desc(),
-     table.id.desc(),
-     ),
+    // Covers queries with NO service filter (attr-only, q-only, or bare
+    // time-range queries) so they still get an index scan + ordered
+    // cursor pagination instead of falling back to a full seq scan + sort.
+    index("logs_timestamp_id_idx").on(
+      table.timestamp.desc(),
+      table.id.desc(),
+    ),
+
+    // NOTE: no GIN index on `attributes`. Attribute equality is compared
+    // as strings via `->>`, which GIN (jsonb_ops/jsonb_path_ops) cannot
+    // accelerate — it only helps `@>`/`?`. A GIN index here would cost
+    // write throughput on every insert for zero query benefit, so
+    // attr.<key> filters are applied as a post-filter on top of the
+    // service/timestamp index range instead. See README "Attribute
+    // storage strategy" for the full trade-off.
   ],
 );
 
