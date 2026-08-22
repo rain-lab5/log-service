@@ -8,7 +8,9 @@ import { errorHandler } from "./http/middleware/errorHandler.js";
 const app = express();
 const PORT = 8080;
 // CONTRACT FIX: parse JSON request bodies before the endpoint handler runs.
-app.use(express.json());
+//--- While testing my load generator, for large number of logs, an error says : Unhandled application error: PayloadTooLargeError: request entity too large
+//--- So i am initially setting the limit of the size of the json to -> 1mb ---//
+app.use(express.json({limit : "1mb"}));
 
 //------ ROUTES ------//
 app.get("/health",healthHandler);
