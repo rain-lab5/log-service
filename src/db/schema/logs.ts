@@ -34,11 +34,12 @@ export const logs = pgTable(
     index("logs_attributes_gin_idx")
       .using("gin", table.attributes),
 
-        index("logs_service_timestamp_id_idx").on(
-      table.service,
-      table.timestamp.desc(),
-      table.id.desc(),
-    ),
+    // Temporarily disabled for ingestion benchmarking.
+     index("logs_service_timestamp_id_idx").on(
+     table.service,
+     table.timestamp.desc(),
+     table.id.desc(),
+     ),
   ],
 );
 
