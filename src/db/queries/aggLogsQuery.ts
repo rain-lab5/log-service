@@ -9,7 +9,8 @@ const BUCKET_INTERVALS: Record<AggregateBucket, string> = {
   "1d": "1 day",
 };
 
-const ORIGIN = new Date("2000-01-01T00:00:00.000Z");
+// Fix: raw date_bin parameters must be serialized before postgres-js binds them.
+const ORIGIN = "2000-01-01T00:00:00.000Z";
 
 export async function aggregateLogs(params: AggregateQuery) {
   const conditions = [
@@ -36,25 +37,40 @@ export async function aggregateLogs(params: AggregateQuery) {
   const bucketStart = sql`date_bin(
     ${sql.raw(`INTERVAL '${BUCKET_INTERVALS[params.bucket]}'`)},
     ${logs.timestamp},
-    ${ORIGIN}
+    ${ORIGIN}::timestamptz
   )`;
 
-  const groupExpression = params.groupBy === "service"
-    ? logs.service
-    : params.groupBy === "level"
-      ? logs.level
-      : sql`NULL`;
-
-  const rows = await db
-    .select({
-      start: bucketStart,
-      group: groupExpression,
-      count: sql<number>`count(*)::int`,
-    })
-    .from(logs)
-    .where(and(...conditions))
-    .groupBy(bucketStart, groupExpression)
-    .orderBy(sql`${bucketStart} ASC`, sql`${groupExpression} ASC`);
+  // Fix: NULL is returned for an ungrouped result, but it is not a grouping
+  // key. Grouping by NULL causes PostgreSQL to reject the query.
+  const rows = params.groupBy === undefined
+    ? await db
+      .select({
+        start: bucketStart,
+        group: sql`NULL`,
+        count: sql<number>`count(*)::int`,
+      })
+      .from(logs)
+      .where(and(...conditions))
+      .groupBy(sql.raw("1"))
+      .orderBy(sql.raw("1"))
+    : await db
+      .select({
+        start: bucketStart,
+        group: params.groupBy === "service" ? logs.service : logs.level,
+        count: sql<number>`count(*)::int`,
+      })
+      .from(logs)
+      .where(and(...conditions))
+      // Fix: use the selected bucket position so each date_bin occurrence does
+      // not receive a different bound origin parameter.
+      .groupBy(
+        sql.raw("1"),
+        params.groupBy === "service" ? logs.service : logs.level,
+      )
+      .orderBy(
+        sql.raw("1"),
+        params.groupBy === "service" ? logs.service : logs.level,
+      );
 
   return rows.map((row) => ({
     start: new Date(row.start as Date).toISOString(),
