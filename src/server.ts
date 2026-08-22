@@ -3,7 +3,7 @@ import { healthHandler } from "./http/handlers/healthHandler.js";
 import { handleAddLogs } from "./http/handlers/handleAddLogs.js";
 import { initializeApplication } from "./startup.js";
 import { errorHandler } from "./http/middleware/errorHandler.js";
-
+import { handleGetLogs } from "./http/handlers/handleGetLogs.js";
 
 const app = express();
 const PORT = 8080;
@@ -15,6 +15,7 @@ app.use(express.json({limit : "1mb"}));
 //------ ROUTES ------//
 app.get("/health",healthHandler);
 app.post("/logs",handleAddLogs);
+app.get("/logs",handleGetLogs);
 //------ ROUTES ------//
 
 // ------ ERROR HANDLER ------ //
